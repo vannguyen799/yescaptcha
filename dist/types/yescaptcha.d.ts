@@ -1,5 +1,5 @@
 import APIClient, { APIClientOptions } from "./api-client.js";
-type YescaptchaAPIClientOptions = {
+type YesCaptchaAPIClientOptions = {
     clientKey: string;
     node?: string;
 };
@@ -41,10 +41,10 @@ type TaskResultResponse<T> = BaseAPIResponse & {
     status: "ready" | "error" | "processing";
     solution: T;
 };
-export default class YescaptchaAPIClient extends APIClient {
+export default class YesCaptchaAPIClient extends APIClient {
     static DEFAULT_NODE: string;
     private clientKey;
-    constructor({ clientKey, node }: YescaptchaAPIClientOptions, opts?: APIClientOptions);
+    constructor({ clientKey, node }: YesCaptchaAPIClientOptions, opts?: APIClientOptions);
     getBalance(): Promise<{
         balance: number;
     }>;

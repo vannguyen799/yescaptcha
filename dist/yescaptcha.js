@@ -22,12 +22,11 @@ export var TaskType;
     TaskType["TurnstileTaskProxylessM1"] = "TurnstileTaskProxylessM1";
     TaskType["CloudFlareTaskS2"] = "CloudFlareTaskS2";
 })(TaskType || (TaskType = {}));
-const ImageToTextTaskList = [TaskType.ImageToTextTask, TaskType.ImageToTextTaskM1, TaskType.ImageToTextTaskMuggle];
-class YescaptchaAPIClient extends APIClient {
+class YesCaptchaAPIClient extends APIClient {
     constructor({ clientKey, node }, opts = {}) {
         super({
             ...opts,
-            base: node || YescaptchaAPIClient.DEFAULT_NODE,
+            base: node || YesCaptchaAPIClient.DEFAULT_NODE,
         });
         this.clientKey = clientKey;
     }
@@ -57,5 +56,5 @@ class YescaptchaAPIClient extends APIClient {
         return this.post(`getTaskResult`, { clientKey: this.clientKey, taskId }).then((res) => res.json());
     }
 }
-YescaptchaAPIClient.DEFAULT_NODE = "https://api.yescaptcha.com";
-export default YescaptchaAPIClient;
+YesCaptchaAPIClient.DEFAULT_NODE = "https://api.yescaptcha.com";
+export default YesCaptchaAPIClient;

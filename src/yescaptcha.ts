@@ -1,7 +1,7 @@
 import APIClient, { APIClientOptions } from "./api-client.js";
 import { sleep } from "./utils.js";
 
-type YescaptchaAPIClientOptions = {
+type YesCaptchaAPIClientOptions = {
   clientKey: string;
   node?: string; //
 };
@@ -33,7 +33,6 @@ export enum TaskType {
 }
 /** @description  English and numeric characters in images with varying lengths */
 type ImageToTextTaskType = TaskType.ImageToTextTask | TaskType.ImageToTextTaskM1 | TaskType.ImageToTextTaskMuggle;
-const ImageToTextTaskList = [TaskType.ImageToTextTask, TaskType.ImageToTextTaskM1, TaskType.ImageToTextTaskMuggle];
 /** @description  reCaptcha V2 protocol interface */
 type NoCaptchaTaskProxylessType =
   | TaskType.NoCaptchaTaskProxyless
@@ -48,6 +47,7 @@ type RecaptchaV3TaskProxylessType =
 
 type RecaptchaV2EnterpriseTaskProxylessType = TaskType.RecaptchaV2EnterpriseTaskProxyless;
 // | TaskType.RecaptchaV2EnterpriseTaskProxylessK1 ;
+
 type CreateTaskResponse = BaseAPIResponse & {
   taskId: string;
 };
@@ -58,14 +58,14 @@ type TaskResultResponse<T> = BaseAPIResponse & {
   solution: T;
 };
 
-export default class YescaptchaAPIClient extends APIClient {
+export default class YesCaptchaAPIClient extends APIClient {
   static DEFAULT_NODE = "https://api.yescaptcha.com";
   private clientKey: string;
 
-  constructor({ clientKey, node }: YescaptchaAPIClientOptions, opts: APIClientOptions = {}) {
+  constructor({ clientKey, node }: YesCaptchaAPIClientOptions, opts: APIClientOptions = {}) {
     super({
       ...opts,
-      base: node || YescaptchaAPIClient.DEFAULT_NODE,
+      base: node || YesCaptchaAPIClient.DEFAULT_NODE,
     });
     this.clientKey = clientKey;
   }
@@ -180,14 +180,6 @@ export default class YescaptchaAPIClient extends APIClient {
     }
     throw new Error("Task result not ready within the timeout period");
   }
-
-  // getTaskResult<T = TaskType.HCaptchaTaskProxyless>(
-  //   taskId: string
-  // ): Promise<TaskResultResponse<{ gRecaptchaResponse: string; userAgent?: string; respKey?: string }>>;
-  // getTaskResult<T = NoCaptchaTaskProxylessType | RecaptchaV3TaskProxylessType | RecaptchaV2EnterpriseTaskProxylessType>(
-  //   taskId: string
-  // ): Promise<TaskResultResponse<{ gRecaptchaResponse: string }>>;
-  // getTaskResult<T = TaskType.ImageToTextTask >(taskId: string): Promise<TaskResultResponse<{ text: string }>>;
 
   getTaskResult<T extends TaskType>(
     taskId: string
