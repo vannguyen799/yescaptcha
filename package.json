@@ -1,0 +1,22 @@
+{
+  "name": "yescaptcha",
+  "version": "0.0.1",
+  
+  "main": "./dist/index.js",
+  "types": "./dist/types/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "description": "",
+  "dependencies": {
+    "https-proxy-agent": "^7.0.6",
+    "node-fetch": "^3.3.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vannguyen799/yescaptcha.git"
+  }
+}

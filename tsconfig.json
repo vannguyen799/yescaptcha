@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2020", // Compile to ES2020
+    "module": "Node16", // Use Node.js 16 module system
+    "moduleResolution": "node16", // Node.js module resolution
+    "esModuleInterop": true, // Enable ES module interoperability
+    "declaration": true, // Generate declaration files
+    "declarationDir": "./dist/types", // Output directory for declaration files
+    "forceConsistentCasingInFileNames": true, // Enforce consistent casing
+    "strict": true, // Enable strict type-checking
+    "skipLibCheck": true, // Skip library checks for faster compilation
+    "baseUrl": "./src", // Base directory for module resolution
+    
+    "rootDir": "./src", // Root directory of source files
+    "outDir": "./dist" // Output directory for compiled files
+  },
+  "include": ["src"], // Include all files in the src directory
+  "exclude": ["node_modules"] // Exclude node_modules from compilation
+}
