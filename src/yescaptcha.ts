@@ -152,7 +152,15 @@ export default class YescaptchaAPIClient extends APIClient {
       res.json()
     ) as Promise<CreateTaskResponse>;
   }
-
+  async waitForTaskResult<T extends ImageToTextTaskType>(taskId: string, timeout?: number): Promise<{ text: string }>;
+  async waitForTaskResult<T extends TaskType.HCaptchaTaskProxyless>(
+    taskId: string,
+    timeout?: number
+  ): Promise<{ gRecaptchaResponse: string; userAgent?: string; respKey?: string }>;
+  async waitForTaskResult<T extends NoCaptchaTaskProxylessType | RecaptchaV3TaskProxylessType>(
+    taskId: string,
+    timeout?: number
+  ): Promise<{ gRecaptchaResponse: string }>;
   async waitForTaskResult<T extends TaskType>(taskId: string, timeout: number = 5 * 60 * 1000) {
     const start = Date.now();
 
@@ -173,13 +181,26 @@ export default class YescaptchaAPIClient extends APIClient {
     throw new Error("Task result not ready within the timeout period");
   }
 
-  getTaskResult<T = TaskType.HCaptchaTaskProxyless>(
+  // getTaskResult<T = TaskType.HCaptchaTaskProxyless>(
+  //   taskId: string
+  // ): Promise<TaskResultResponse<{ gRecaptchaResponse: string; userAgent?: string; respKey?: string }>>;
+  // getTaskResult<T = NoCaptchaTaskProxylessType | RecaptchaV3TaskProxylessType | RecaptchaV2EnterpriseTaskProxylessType>(
+  //   taskId: string
+  // ): Promise<TaskResultResponse<{ gRecaptchaResponse: string }>>;
+  // getTaskResult<T = TaskType.ImageToTextTask >(taskId: string): Promise<TaskResultResponse<{ text: string }>>;
+
+  getTaskResult<T extends TaskType>(
     taskId: string
-  ): Promise<TaskResultResponse<{ gRecaptchaResponse: string; userAgent?: string; respKey?: string }>>;
-  getTaskResult<T = NoCaptchaTaskProxylessType | RecaptchaV3TaskProxylessType | RecaptchaV2EnterpriseTaskProxylessType>(
-    taskId: string
-  ): Promise<TaskResultResponse<{ gRecaptchaResponse: string }>>;
-  getTaskResult<T = ImageToTextTaskType>(taskId: string): Promise<TaskResultResponse<{ text: string }>>;
+  ): Promise<
+    T extends ImageToTextTaskType
+      ? TaskResultResponse<{ text: string }>
+      : T extends NoCaptchaTaskProxylessType | RecaptchaV3TaskProxylessType | RecaptchaV2EnterpriseTaskProxylessType
+      ? TaskResultResponse<{ gRecaptchaResponse: string }>
+      : T extends TaskType.HCaptchaTaskProxyless
+      ? TaskResultResponse<{ gRecaptchaResponse: string; userAgent?: string; respKey?: string }>
+      : never
+  >;
+
   getTaskResult(taskId: string): Promise<TaskResultResponse<any>> {
     return this.post(`getTaskResult`, { clientKey: this.clientKey, taskId }).then((res) => res.json()) as Promise<
       TaskResultResponse<any>

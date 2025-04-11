@@ -120,21 +120,25 @@ export default class YescaptchaAPIClient extends APIClient {
         websiteURL: string;
         websiteKey: string;
     }): Promise<CreateTaskResponse>;
-    waitForTaskResult<T extends TaskType>(taskId: string, timeout?: number): Promise<{
+    waitForTaskResult<T extends ImageToTextTaskType>(taskId: string, timeout?: number): Promise<{
+        text: string;
+    }>;
+    waitForTaskResult<T extends TaskType.HCaptchaTaskProxyless>(taskId: string, timeout?: number): Promise<{
         gRecaptchaResponse: string;
         userAgent?: string;
         respKey?: string;
     }>;
-    getTaskResult<T = TaskType.HCaptchaTaskProxyless>(taskId: string): Promise<TaskResultResponse<{
+    waitForTaskResult<T extends NoCaptchaTaskProxylessType | RecaptchaV3TaskProxylessType>(taskId: string, timeout?: number): Promise<{
+        gRecaptchaResponse: string;
+    }>;
+    getTaskResult<T extends TaskType>(taskId: string): Promise<T extends ImageToTextTaskType ? TaskResultResponse<{
+        text: string;
+    }> : T extends NoCaptchaTaskProxylessType | RecaptchaV3TaskProxylessType | RecaptchaV2EnterpriseTaskProxylessType ? TaskResultResponse<{
+        gRecaptchaResponse: string;
+    }> : T extends TaskType.HCaptchaTaskProxyless ? TaskResultResponse<{
         gRecaptchaResponse: string;
         userAgent?: string;
         respKey?: string;
-    }>>;
-    getTaskResult<T = NoCaptchaTaskProxylessType | RecaptchaV3TaskProxylessType | RecaptchaV2EnterpriseTaskProxylessType>(taskId: string): Promise<TaskResultResponse<{
-        gRecaptchaResponse: string;
-    }>>;
-    getTaskResult<T = ImageToTextTaskType>(taskId: string): Promise<TaskResultResponse<{
-        text: string;
-    }>>;
+    }> : never>;
 }
 export {};
