@@ -10,9 +10,9 @@ npm install yescaptcha-js
 
 
 ```typescript
-import YescaptchaAPIClient, { TaskType } from "yescaptcha-js";
+import YesCaptchaAPIClient, { TaskType } from "yescaptcha-js";
 
-const client = new YescaptchaAPIClient({ clientKey: "clientKey" });
+const client = new YesCaptchaAPIClient({ clientKey: "clientKey" });
 
 const { taskId } = await client.createTask({
   type: TaskType.HCaptchaTaskProxyless,
