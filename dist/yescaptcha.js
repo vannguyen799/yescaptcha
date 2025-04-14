@@ -22,11 +22,11 @@ export var TaskType;
     TaskType["TurnstileTaskProxylessM1"] = "TurnstileTaskProxylessM1";
     TaskType["CloudFlareTaskS2"] = "CloudFlareTaskS2";
 })(TaskType || (TaskType = {}));
-class YesCaptchaAPIClient extends APIClient {
+class YesCaptcha extends APIClient {
     constructor({ clientKey, node }, opts = {}) {
         super({
             ...opts,
-            base: node || YesCaptchaAPIClient.DEFAULT_NODE,
+            base: node || YesCaptcha.DEFAULT_NODE,
         });
         this.clientKey = clientKey;
     }
@@ -37,8 +37,7 @@ class YesCaptchaAPIClient extends APIClient {
         return this.post(`createTask`, { clientKey: this.clientKey, task: opts }).then((res) => res.json());
     }
     async waitForTaskResult(taskId, timeout = 5 * 60 * 1000) {
-        const start = Date.now();
-        const end = start + timeout;
+        const start = Date.now(), end = start + timeout;
         while (Date.now() < end) {
             const res = await this.getTaskResult(taskId);
             if (res.status === "ready") {
@@ -56,5 +55,5 @@ class YesCaptchaAPIClient extends APIClient {
         return this.post(`getTaskResult`, { clientKey: this.clientKey, taskId }).then((res) => res.json());
     }
 }
-YesCaptchaAPIClient.DEFAULT_NODE = "https://api.yescaptcha.com";
-export default YesCaptchaAPIClient;
+YesCaptcha.DEFAULT_NODE = "https://api.yescaptcha.com";
+export default YesCaptcha;

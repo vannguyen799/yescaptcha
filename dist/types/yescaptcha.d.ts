@@ -1,5 +1,5 @@
 import APIClient, { APIClientOptions } from "./api-client.js";
-type YesCaptchaAPIClientOptions = {
+type YesCaptchaOptions = {
     clientKey: string;
     node?: string;
 };
@@ -41,10 +41,10 @@ type TaskResultResponse<T> = BaseAPIResponse & {
     status: "ready" | "error" | "processing";
     solution: T;
 };
-export default class YesCaptchaAPIClient extends APIClient {
+export default class YesCaptcha extends APIClient {
     static DEFAULT_NODE: string;
     private clientKey;
-    constructor({ clientKey, node }: YesCaptchaAPIClientOptions, opts?: APIClientOptions);
+    constructor({ clientKey, node }: YesCaptchaOptions, opts?: APIClientOptions);
     getBalance(): Promise<{
         balance: number;
     }>;
@@ -120,6 +120,15 @@ export default class YesCaptchaAPIClient extends APIClient {
         websiteURL: string;
         websiteKey: string;
     }): Promise<CreateTaskResponse>;
+    waitForTaskResult<T = undefined>(taskId: string, timeout?: number): Promise<{
+        gRecaptchaResponse: string;
+    } | {
+        text: string;
+    } | {
+        gRecaptchaResponse: string;
+        userAgent?: string;
+        respKey?: string;
+    }>;
     waitForTaskResult<T extends ImageToTextTaskType>(taskId: string, timeout?: number): Promise<{
         text: string;
     }>;

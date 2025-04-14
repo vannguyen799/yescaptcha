@@ -1,3 +1,3 @@
-import YesCaptchaAPIClient, { TaskType } from "./yescaptcha.js";
+import YesCaptcha, { TaskType } from "./yescaptcha.js";
 export { TaskType };
-export default YesCaptchaAPIClient;
+export default YesCaptcha;

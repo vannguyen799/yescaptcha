@@ -19,7 +19,7 @@ export default class APIClient {
         return url;
     }
     post(url, body, headers = {}, fetchOptions = {}) {
-        console.debug("post", url, body, headers, fetchOptions);
+        // console.debug("post", url, body, headers, fetchOptions);
         return fetch(this.__formatUrl(url), {
             method: "POST",
             headers: {
@@ -34,7 +34,7 @@ export default class APIClient {
         });
     }
     get(url, params = {}, headers = {}, fetchOptions = {}) {
-        console.debug("get", url, params, headers, fetchOptions);
+        // console.debug("get", url, params, headers, fetchOptions);
         const urlObj = new URL(this.__formatUrl(url));
         Object.keys(params).forEach((key) => {
             if (params[key] !== undefined)

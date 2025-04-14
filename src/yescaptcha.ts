@@ -1,7 +1,7 @@
 import APIClient, { APIClientOptions } from "./api-client.js";
 import { sleep } from "./utils.js";
 
-type YesCaptchaAPIClientOptions = {
+type YesCaptchaOptions = {
   clientKey: string;
   node?: string; //
 };
@@ -58,14 +58,14 @@ type TaskResultResponse<T> = BaseAPIResponse & {
   solution: T;
 };
 
-export default class YesCaptchaAPIClient extends APIClient {
+export default class YesCaptcha extends APIClient {
   static DEFAULT_NODE = "https://api.yescaptcha.com";
   private clientKey: string;
 
-  constructor({ clientKey, node }: YesCaptchaAPIClientOptions, opts: APIClientOptions = {}) {
+  constructor({ clientKey, node }: YesCaptchaOptions, opts: APIClientOptions = {}) {
     super({
       ...opts,
-      base: node || YesCaptchaAPIClient.DEFAULT_NODE,
+      base: node || YesCaptcha.DEFAULT_NODE,
     });
     this.clientKey = clientKey;
   }
@@ -152,6 +152,15 @@ export default class YesCaptchaAPIClient extends APIClient {
       res.json()
     ) as Promise<CreateTaskResponse>;
   }
+
+  async waitForTaskResult<T=undefined>(
+    taskId: string,
+    timeout?: number
+  ): Promise<
+    | { gRecaptchaResponse: string }
+    | { text: string }
+    | { gRecaptchaResponse: string; userAgent?: string; respKey?: string }
+  >;
   async waitForTaskResult<T extends ImageToTextTaskType>(taskId: string, timeout?: number): Promise<{ text: string }>;
   async waitForTaskResult<T extends TaskType.HCaptchaTaskProxyless>(
     taskId: string,
@@ -162,15 +171,13 @@ export default class YesCaptchaAPIClient extends APIClient {
     timeout?: number
   ): Promise<{ gRecaptchaResponse: string }>;
   async waitForTaskResult<T extends TaskType>(taskId: string, timeout: number = 5 * 60 * 1000) {
-    const start = Date.now();
-
-    const end = start + timeout;
+    const start = Date.now(),
+      end = start + timeout;
     while (Date.now() < end) {
       const res = await this.getTaskResult<T>(taskId);
       if (res.status === "ready") {
         return res.solution;
       }
-
       if (res.status === "processing") {
         await sleep(2000);
         continue;
