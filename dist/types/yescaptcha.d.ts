@@ -20,6 +20,7 @@ export declare enum TaskType {
     RecaptchaV3TaskProxylessM1 = "RecaptchaV3TaskProxylessM1",
     RecaptchaV3TaskProxylessK1 = "RecaptchaV3TaskProxylessK1",
     RecaptchaV3EnterpriseTaskProxylessK1 = "RecaptchaV3EnterpriseTaskProxylessK1",
+    RecaptchaV3EnterpriseTaskProxyLessK1 = "RecaptchaV3EnterpriseTaskProxyLessK1",
     HCaptchaTaskProxyless = "HCaptchaTaskProxyless",
     HCaptchaClassification = "HCaptchaClassification",
     FunCaptchaClassification = "FunCaptchaClassification",
@@ -31,7 +32,7 @@ export declare enum TaskType {
 type ImageToTextTaskType = TaskType.ImageToTextTask | TaskType.ImageToTextTaskM1 | TaskType.ImageToTextTaskMuggle;
 /** @description  reCaptcha V2 protocol interface */
 type NoCaptchaTaskProxylessType = TaskType.NoCaptchaTaskProxyless | TaskType.RecaptchaV2TaskProxyless | TaskType.RecaptchaV2EnterpriseTaskProxyless;
-type RecaptchaV3TaskProxylessType = TaskType.RecaptchaV3TaskProxyless | TaskType.RecaptchaV3TaskProxylessM1 | TaskType.RecaptchaV3TaskProxylessK1 | TaskType.RecaptchaV3EnterpriseTaskProxylessK1;
+type RecaptchaV3TaskProxylessType = TaskType.RecaptchaV3TaskProxyless | TaskType.RecaptchaV3TaskProxylessM1 | TaskType.RecaptchaV3TaskProxylessK1 | TaskType.RecaptchaV3EnterpriseTaskProxylessK1 | TaskType.RecaptchaV3EnterpriseTaskProxyLessK1;
 type RecaptchaV2EnterpriseTaskProxylessType = TaskType.RecaptchaV2EnterpriseTaskProxyless;
 type CreateTaskResponse = BaseAPIResponse & {
     taskId: string;
@@ -40,6 +41,9 @@ type TaskResultResponse<T> = BaseAPIResponse & {
     taskId: string;
     status: "ready" | "error" | "processing";
     solution: T;
+};
+type CreateTaskOptions = {
+    proxy: string;
 };
 export default class YesCaptcha extends APIClient {
     static DEFAULT_NODE: string;
@@ -54,7 +58,7 @@ export default class YesCaptcha extends APIClient {
     createTask(opts: {
         type: ImageToTextTaskType;
         body: string;
-    }): Promise<CreateTaskResponse>;
+    } & CreateTaskOptions): Promise<CreateTaskResponse>;
     /**
      * @param opts.websiteURL The address of the ReCaptcha web page.Fixed value
      * @param opts.websiteKey The ReCaptcha key of the web page. Fixed value
@@ -65,7 +69,7 @@ export default class YesCaptcha extends APIClient {
         websiteURL: string;
         websiteKey: string;
         isInvisible?: boolean;
-    }): Promise<CreateTaskResponse>;
+    } & CreateTaskOptions): Promise<CreateTaskResponse>;
     /**
      * @param opts.websiteURL The address of the ReCaptcha web page.Fixed value
      * @param opts.websiteKey The ReCaptcha key of the web page. Fixed value
@@ -76,7 +80,7 @@ export default class YesCaptcha extends APIClient {
         websiteURL: string;
         websiteKey: string;
         pageAction?: string;
-    }): Promise<CreateTaskResponse>;
+    } & CreateTaskOptions): Promise<CreateTaskResponse>;
     /**
      * @param opts.websiteURL The address of the ReCaptcha web page.Fixed value
      * @param opts.websiteKey The ReCaptcha key of the web page. Fixed value
@@ -95,7 +99,7 @@ export default class YesCaptcha extends APIClient {
         enterprisePayload?: {
             s: string;
         };
-    }): Promise<CreateTaskResponse>;
+    } & CreateTaskOptions): Promise<CreateTaskResponse>;
     /**
      * @param opts.websiteURL The address of the Hcaptcha web page.Fixed value
      * @param opts.websiteKey The Hcaptcha key of the web page. Fixed value
@@ -110,7 +114,7 @@ export default class YesCaptcha extends APIClient {
         userAgent?: string;
         isInvisible?: boolean;
         rqdata?: string;
-    }): Promise<CreateTaskResponse>;
+    } & CreateTaskOptions): Promise<CreateTaskResponse>;
     /**
      * @param opts.websiteURL Web Address: Generally a fixed value.
      * @param opts.websiteKey Site Key: Generally a fixed value.
@@ -119,7 +123,7 @@ export default class YesCaptcha extends APIClient {
         type: TaskType.TurnstileTaskProxyless | TaskType.TurnstileTaskProxylessM1;
         websiteURL: string;
         websiteKey: string;
-    }): Promise<CreateTaskResponse>;
+    } & CreateTaskOptions): Promise<CreateTaskResponse>;
     waitForTaskResult<T = undefined>(taskId: string, timeout?: number): Promise<{
         gRecaptchaResponse: string;
     } | {

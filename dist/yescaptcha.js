@@ -15,6 +15,7 @@ export var TaskType;
     TaskType["RecaptchaV3TaskProxylessM1"] = "RecaptchaV3TaskProxylessM1";
     TaskType["RecaptchaV3TaskProxylessK1"] = "RecaptchaV3TaskProxylessK1";
     TaskType["RecaptchaV3EnterpriseTaskProxylessK1"] = "RecaptchaV3EnterpriseTaskProxylessK1";
+    TaskType["RecaptchaV3EnterpriseTaskProxyLessK1"] = "RecaptchaV3EnterpriseTaskProxyLessK1";
     TaskType["HCaptchaTaskProxyless"] = "HCaptchaTaskProxyless";
     TaskType["HCaptchaClassification"] = "HCaptchaClassification";
     TaskType["FunCaptchaClassification"] = "FunCaptchaClassification";
@@ -33,8 +34,15 @@ class YesCaptcha extends APIClient {
     getBalance() {
         return this.post(`getBalance`, { clientKey: this.clientKey }).then((res) => res.json());
     }
-    createTask(opts) {
-        return this.post(`createTask`, { clientKey: this.clientKey, task: opts }).then((res) => res.json());
+    async createTask(opts) {
+        const res = (await this.post(`createTask`, { clientKey: this.clientKey, task: opts }).then((res) => res.json()));
+        if (!res.taskId) {
+            if ((await this.getBalance().then((res) => res.balance)) <= 0) {
+                throw new Error("Insufficient YesCaptcha balance");
+            }
+            throw new Error(`Error ${res.errorId}: ${res.errorDescription}`);
+        }
+        return res;
     }
     async waitForTaskResult(taskId, timeout = 5 * 60 * 1000) {
         const start = Date.now(), end = start + timeout;

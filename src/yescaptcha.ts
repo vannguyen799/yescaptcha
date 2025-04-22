@@ -24,6 +24,7 @@ export enum TaskType {
   RecaptchaV3TaskProxylessM1 = "RecaptchaV3TaskProxylessM1",
   RecaptchaV3TaskProxylessK1 = "RecaptchaV3TaskProxylessK1",
   RecaptchaV3EnterpriseTaskProxylessK1 = "RecaptchaV3EnterpriseTaskProxylessK1",
+  RecaptchaV3EnterpriseTaskProxyLessK1 = "RecaptchaV3EnterpriseTaskProxyLessK1",
   HCaptchaTaskProxyless = "HCaptchaTaskProxyless",
   HCaptchaClassification = "HCaptchaClassification",
   FunCaptchaClassification = "FunCaptchaClassification",
@@ -33,6 +34,8 @@ export enum TaskType {
 }
 /** @description  English and numeric characters in images with varying lengths */
 type ImageToTextTaskType = TaskType.ImageToTextTask | TaskType.ImageToTextTaskM1 | TaskType.ImageToTextTaskMuggle;
+type ImageToTextTaskTypeResponse = { text: string };
+
 /** @description  reCaptcha V2 protocol interface */
 type NoCaptchaTaskProxylessType =
   | TaskType.NoCaptchaTaskProxyless
@@ -43,7 +46,8 @@ type RecaptchaV3TaskProxylessType =
   | TaskType.RecaptchaV3TaskProxyless
   | TaskType.RecaptchaV3TaskProxylessM1
   | TaskType.RecaptchaV3TaskProxylessK1
-  | TaskType.RecaptchaV3EnterpriseTaskProxylessK1;
+  | TaskType.RecaptchaV3EnterpriseTaskProxylessK1
+  | TaskType.RecaptchaV3EnterpriseTaskProxyLessK1;
 
 type RecaptchaV2EnterpriseTaskProxylessType = TaskType.RecaptchaV2EnterpriseTaskProxyless;
 // | TaskType.RecaptchaV2EnterpriseTaskProxylessK1 ;
@@ -56,6 +60,10 @@ type TaskResultResponse<T> = BaseAPIResponse & {
   taskId: string;
   status: "ready" | "error" | "processing"; // processing, ready, error
   solution: T;
+};
+
+type CreateTaskOptions = {
+  proxy: string; // Proxy address, such as: http://
 };
 
 export default class YesCaptcha extends APIClient {
@@ -79,30 +87,34 @@ export default class YesCaptcha extends APIClient {
   /**
    * @param opts.body File body encoded in base64. Make sure to send it without line breaks.（do not data:image/*********;base64,content
    * */
-  createTask(opts: { type: ImageToTextTaskType; body: string }): Promise<CreateTaskResponse>;
+  createTask(opts: { type: ImageToTextTaskType; body: string } & CreateTaskOptions): Promise<CreateTaskResponse>;
 
   /**
    * @param opts.websiteURL The address of the ReCaptcha web page.Fixed value
    * @param opts.websiteKey The ReCaptcha key of the web page. Fixed value
    * @param opts.isInvisible [Optional] If you encounter a reCaptchaV2 of isInvisible type, you need to add this parameter.
    */
-  createTask(opts: {
-    type: NoCaptchaTaskProxylessType;
-    websiteURL: string;
-    websiteKey: string;
-    isInvisible?: boolean;
-  }): Promise<CreateTaskResponse>;
+  createTask(
+    opts: {
+      type: NoCaptchaTaskProxylessType;
+      websiteURL: string;
+      websiteKey: string;
+      isInvisible?: boolean;
+    } & CreateTaskOptions
+  ): Promise<CreateTaskResponse>;
   /**
    * @param opts.websiteURL The address of the ReCaptcha web page.Fixed value
    * @param opts.websiteKey The ReCaptcha key of the web page. Fixed value
    * @param opts.pageAction [Optional] This value must be correct, otherwise the recognition result is invalid.
    */
-  createTask(opts: {
-    type: RecaptchaV3TaskProxylessType;
-    websiteURL: string;
-    websiteKey: string;
-    pageAction?: string;
-  }): Promise<CreateTaskResponse>;
+  createTask(
+    opts: {
+      type: RecaptchaV3TaskProxylessType;
+      websiteURL: string;
+      websiteKey: string;
+      pageAction?: string;
+    } & CreateTaskOptions
+  ): Promise<CreateTaskResponse>;
   /**
    * @param opts.websiteURL The address of the ReCaptcha web page.Fixed value
    * @param opts.websiteKey The ReCaptcha key of the web page. Fixed value
@@ -114,12 +126,14 @@ export default class YesCaptcha extends APIClient {
    * 		'callback': function(n){},
    * 		's': "2JvUXHNTnZl1Jb6WEvbDyBMzrMTR7oQ78QRhBcG07rk9bpaAaE0LRq1ZeP5NYa0N...ugQA"
    */
-  createTask(opts: {
-    type: RecaptchaV2EnterpriseTaskProxylessType;
-    websiteURL: string;
-    websiteKey: string;
-    enterprisePayload?: { s: string };
-  }): Promise<CreateTaskResponse>;
+  createTask(
+    opts: {
+      type: RecaptchaV2EnterpriseTaskProxylessType;
+      websiteURL: string;
+      websiteKey: string;
+      enterprisePayload?: { s: string };
+    } & CreateTaskOptions
+  ): Promise<CreateTaskResponse>;
 
   /**
    * @param opts.websiteURL The address of the Hcaptcha web page.Fixed value
@@ -128,32 +142,45 @@ export default class YesCaptcha extends APIClient {
    * @param opts.isInvisible [Optional] Not required. If you encounter an implicit version, please pass a true value.
    * @param opts.rqdata [Optional] Not necessary, websites such as discord may need to obtain the rqdata field.
    */
-  createTask(opts: {
-    type: TaskType.HCaptchaTaskProxyless;
-    websiteURL: string;
-    websiteKey: string;
-    userAgent?: string;
-    isInvisible?: boolean;
-    rqdata?: string;
-  }): Promise<CreateTaskResponse>;
+  createTask(
+    opts: {
+      type: TaskType.HCaptchaTaskProxyless;
+      websiteURL: string;
+      websiteKey: string;
+      userAgent?: string;
+      isInvisible?: boolean;
+      rqdata?: string;
+    } & CreateTaskOptions
+  ): Promise<CreateTaskResponse>;
 
   /**
    * @param opts.websiteURL Web Address: Generally a fixed value.
    * @param opts.websiteKey Site Key: Generally a fixed value.
    */
-  createTask(opts: {
-    type: TaskType.TurnstileTaskProxyless | TaskType.TurnstileTaskProxylessM1;
-    websiteURL: string;
-    websiteKey: string;
-  }): Promise<CreateTaskResponse>;
+  createTask(
+    opts: {
+      type: TaskType.TurnstileTaskProxyless | TaskType.TurnstileTaskProxylessM1;
+      websiteURL: string;
+      websiteKey: string;
+    } & CreateTaskOptions
+  ): Promise<CreateTaskResponse>;
 
-  createTask(opts: { [key: string]: any }): Promise<CreateTaskResponse> {
-    return this.post(`createTask`, { clientKey: this.clientKey, task: opts }).then((res) =>
+  async createTask(opts: { [key: string]: any }): Promise<CreateTaskResponse> {
+    const res = (await this.post(`createTask`, { clientKey: this.clientKey, task: opts }).then((res) =>
       res.json()
-    ) as Promise<CreateTaskResponse>;
+    )) as CreateTaskResponse;
+
+    if (!res.taskId) {
+      if ((await this.getBalance().then((res) => res.balance)) <= 0) {
+        throw new Error("Insufficient YesCaptcha balance");
+      }
+      throw new Error(`Error ${res.errorId}: ${res.errorDescription}`);
+    }
+
+    return res as CreateTaskResponse;
   }
 
-  async waitForTaskResult<T=undefined>(
+  async waitForTaskResult<T = undefined>(
     taskId: string,
     timeout?: number
   ): Promise<

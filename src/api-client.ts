@@ -13,6 +13,7 @@ export default class APIClient {
   private signal: AbortSignal | null = null;
   base: string | null;
   constructor(opts: APIClientOptions) {
+    
     if (opts.proxy) {
       this.agent = new HttpsProxyAgent(opts.proxy);
     }
